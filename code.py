@@ -33,24 +33,6 @@ keymap = [
     [Keycode.GUI, Keycode.SHIFT, Keycode.F11]  # eject CIRCUITPY
 ]
 
-"""
-    [Keycode.A],
-    [Keycode.B],
-    [Keycode.C],
-    [Keycode.D],
-    [Keycode.E],
-    [Keycode.F],
-    [Keycode.G],
-    [Keycode.H],
-    [Keycode.I],
-    [Keycode.J],
-    [Keycode.K],
-    [Keycode.L],
-    [Keycode.SHIFT, Keycode.M],  # mute Teams
-    [Keycode.SHIFT, Keycode.N],  # close Teams window/ end call
-    [Keycode.O],
-    [Keycode.SHIFT, Keycode.P]  # eject CIRCUITPY
-"""
 
 
 for key in keys:
@@ -93,9 +75,3 @@ while True:
         keys[i].set_led(r/15, g/15, b/15)  # divide by makes keys less bright
 
 
-
-"""
-
-I imagine you've figured this out by now, but in case you haven't and someone else looks for this: I had the same struggle and with enough digging managed to figure a way of doing it. In your keymap you need to put multiple keycodes in a list (), and single keycodes in an array []. Then you need to use the * operator when passing to send method i.e. keyboard.send(*keycode)
-
-"""
