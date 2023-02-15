@@ -2,6 +2,7 @@ from pmk import PMK, number_to_xy, hsv_to_rgb
 from pmk.platform.rgbkeypadbase import RGBKeypadBase as Hardware
 import math
 import usb_hid
+import time
 from adafruit_hid.keyboard import Keyboard
 from adafruit_hid.keyboard_layout_us import KeyboardLayoutUS
 from adafruit_hid.keycode import Keycode
@@ -29,9 +30,9 @@ keymap = [
     [Keycode.A],
     [Keycode.B],
     [Keycode.GUI, Keycode.SHIFT, Keycode.F12],  # mute Teams
-    [Keycode.GUI, Keycode.SHIFT, Keycode.F10],  # close Teams window/ end call
+    [Keycode.GUI, Keycode.SHIFT, Keycode.F11],  # eject CIRCUITPY
     [Keycode.ALT, Keycode.GUI, Keycode.F1],     # sleep (see Custom shortcuts workflow in Alfred)
-    [Keycode.GUI, Keycode.SHIFT, Keycode.F11]  # eject CIRCUITPY
+    [Keycode.GUI, Keycode.SHIFT, Keycode.F10]  # close Teams window/ end call
 ]
 
 numpad = [
@@ -52,26 +53,13 @@ numpad = [
     [Keycode.ZERO],
     [Keycode.ALT, Keycode.THREE] # could be hash
 ]
-"""
-    [Keycode.A],
-    [Keycode.B],
-    [Keycode.C],
-    [Keycode.D],
-    [Keycode.E],
-    [Keycode.F],
-    [Keycode.G],
-    [Keycode.H],
-    [Keycode.I],
-    [Keycode.J],
-    [Keycode.K],
-    [Keycode.L],
-    [Keycode.SHIFT, Keycode.M],  # mute Teams
-    [Keycode.SHIFT, Keycode.N],  # close Teams window/ end call
-    [Keycode.O],
-    [Keycode.SHIFT, Keycode.P]  # eject CIRCUITPY
-"""
+
 
 modifier = keys[8]
+
+def reset_time_last_pressed():
+    global time_last_pressed
+    time_last_pressed = time.monotonic()
 
 def default_key_map():
 
@@ -84,6 +72,7 @@ def default_key_map():
             key.set_led(0, 0, 255)
             keycode = keymap[key.number]
             keyboard.send(*keycode)
+            reset_time_last_pressed()
 
         @keybow.on_release(key)
         def release_handler(key):
@@ -104,6 +93,7 @@ def numlock_key_map():
             key.set_led(0, 0, 255)
             keycode = numpad[key.number]
             keyboard.send(*keycode)
+            reset_time_last_pressed()
 
     keymap_default = False
     set_modifier()
@@ -115,6 +105,7 @@ def set_modifier():
             numlock_key_map()
         else:
             default_key_map()
+        reset_time_last_pressed()
 
 
 default_key_map()
@@ -125,9 +116,18 @@ keymap_default = True
 step = 0
 rainbow_speed = 20  # normally 20, lower is faster
 dullness = 10
+time_last_pressed = time.monotonic()
+sleep_time = 7200 # 7200 is two hours
 
 while True:
     keybow.update()
+
+    if time.monotonic() - time_last_pressed > sleep_time:
+        for key in keys:
+            key.set_led(0,0,0)
+
+        continue
+
 
     if keymap_default is False:
         # set the numbers to one colour
