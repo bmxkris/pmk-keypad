@@ -48,9 +48,9 @@ numpad = [
     [Keycode.EIGHT],
     [Keycode.NINE],
     [],
-    [],
+    [Keycode.KEYPAD_ASTERISK],         # could asterisk
     [Keycode.ZERO],
-    [Keycode.C]
+    [Keycode.ALT, Keycode.THREE] # could be hash
 ]
 """
     [Keycode.A],
